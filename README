@@ -1,1 +1,6 @@
-This is snake.
+This was a fun personal project where I created snake
+with pure ASCII as the output.
+
+If you want to run it, just go into terminal and type:
+./executableSnake in the folder which you downloaded the source code.
+Or you can recompile all the files yourself.
