@@ -20,7 +20,6 @@ class Snake {
 		int getSpeed();
 		void increaseSpeed();
 		bool checkOverlap(int x, int y);
-		void debug() const;
 };
 
 #endif

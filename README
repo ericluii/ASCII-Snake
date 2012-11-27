@@ -5,6 +5,11 @@ If you want to run it, just go into terminal and type:
 ./executableSnake in the folder which you downloaded the source code.
 Or you can recompile all the files yourself.
 
-*** Code will be commented soon.
+All *.cpp files are commented with details about how the code works.
+In the notes section, I have included changes which I plan to implement.
 
-(:
+Future updates beyond changing the way it is implementation:
+- 2 player snake
+- port over to other languages/devices
+
+Please give me some credit if you plan to modify the code.

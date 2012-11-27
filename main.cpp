@@ -1,3 +1,18 @@
+/*
+ main.cpp - main method of snake
+ By: Eric Lui
+
+ Changelog:
+ 	27/11/12 EL - Version 1.0.0 complete, and added documentation
+
+ Notes:
+ 	27/11/12 EL - refer to food.cpp and snake.cpp for changes(affects game implementaion)
+	27/11/12 EL - Implement a save and load game option
+	27/11/12 EL - Plans to make main menu dynamic and allow settings
+
+ If you use this code, please credit me. However, this is free to use.
+ */
+
 #include "game.h"
 #include <iostream>
 #include <fstream>
@@ -9,6 +24,8 @@
 #include <sys/time.h>
 using namespace std;
 
+// The following section below is used to allow
+// key press events in a terminal window
 void changemode(int dir) {
 	static struct termios oldt, newt;
 
@@ -23,6 +40,8 @@ void changemode(int dir) {
 	}
 }
 
+// The following section below is used to allow
+// key press events in a terminal window
 int kbhit (void) {
 	struct timeval tv;
 	fd_set rdfs;
@@ -37,6 +56,9 @@ int kbhit (void) {
 	return FD_ISSET(STDIN_FILENO, &rdfs);
 }
 
+// pausGame(const Game &currentGame)
+//		- Places game in an inifite loop to pause
+//		- unpauses by pressing p or space, and q to quit
 void pauseGame(const Game &currentGame) {
 	cout << "\t\tGAME PAUSED - P/SPACE TO RESUME - Q TO QUIT" << endl;
 	char command;
@@ -55,6 +77,9 @@ void pauseGame(const Game &currentGame) {
 	}
 }
 
+// mainMenu(Game &currentGame)
+//		- Places game in an infinite loop to display menu
+//		- starts game on any key press
 void mainMenu(Game &currentGame) {
 	char command;
 	cout << "\033[2J\033[1;1H";
@@ -95,6 +120,12 @@ void mainMenu(Game &currentGame) {
 	}
 }
 
+// PlayGame(Game &game)
+//		+ Accepts a game
+//		- Infinite loop which plays game
+//		  until game is over
+//		- "wasd" controls snake, 'p' or ' '
+//		  pauses the game
 void playGame(Game &game) {
 	char direction;
 	while(true) {
@@ -119,6 +150,10 @@ void playGame(Game &game) {
 	}
 }
 
+// gameOver()
+//		- Outputs game over text
+//		- Places game in infinite loop until
+//		  'y' or 'n' is pressed to play again or quit
 bool gameOver() {
 	cout << "Play again? Y/N" << endl;
 	

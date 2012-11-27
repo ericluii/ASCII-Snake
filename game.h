@@ -24,8 +24,6 @@ class Game {
 		void printGame() const;
 		int gameSpeed();
 		bool setHighscore();
-		void saveGame() const;
-		void debug() const;
 };
 
 #endif
