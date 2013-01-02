@@ -14,10 +14,10 @@
  */
 
 #include "food.h"
+#include "snake.h"
 #include <iostream>
 #include <cstdlib>
 #include <time.h>
-#include <vector>
 
 using namespace std;
 
@@ -25,8 +25,9 @@ using namespace std;
 //		+ x and y are coordinates, and type is the type of food
 //			- 0 is good food and 1 is bad food
 //		- Each food has a randomized lifespan
-Food::Food(int x, int y, int type): x(x), y(y), type(type) {
+Food::Food(int x, int y, FoodType type): coor(x, y), type(type) {
 	int random = rand() % 3;
+    
 	if (random == 0) {
 		lifespan = 31;
 	}
@@ -36,23 +37,40 @@ Food::Food(int x, int y, int type): x(x), y(y), type(type) {
 	else {
 		lifespan = 51;
 	}
+    
+    switch(type) {
+        case addPoint:
+            display = '+';
+            break;
+        case minusThreePoints:
+            display = '-';
+            break;
+        case increaseSpeed:
+            display = 'f';
+            break;
+        case decreaseSpeed:
+            display = 's';
+            break;
+        case increaseLength:
+            display = 'l';
+            break;
+        case decreaseLength:
+            display = 'd';
+            break;
+    }
 }
 
-// Food:getX()
-//		- Returns the x coordinate of food
-int Food::getX() {
-	return x;
+Coordinate Food::position() {
+    return coor;
 }
 
-// Food::getY()
-//		- Returns the y coordinate of food
-int Food::getY() {
-	return y;
+char Food::displayCharacter() {
+    return display;
 }
 
 // Food::getType()
 //		- Returns the type of the food
-int Food::getType() {
+Food::FoodType Food::getType() {
 	return type;
 }
 
@@ -64,47 +82,35 @@ int Food::getLifespan() {
 	return lifespan;
 }
 
-// Food::changeFoodType(int type)
-//		- Changes the type of the food
-//		- Returns the old food type
-int Food::changeFoodType(int type) {
-	int temp = this->type;
-	this->type = type;
-	return temp;
-}
-
 // Food::changeLifespan(int time)
 //		- Changes lifespan to time
 void Food::changeLifespan(int time) {
 	lifespan = time;
 }
 
-// Food::containsTwoEatableFood(vector<Food> prey)
-//		+ Accepts a vector of food, prey
-//		- Returns true if there are atleast two
-//		   "good" foods in the game
-bool containsTwoEatableFood(vector<Food> prey) {
-	int totalEatable = 0;
-
-	for (int i = 0; i < prey.size(); i++) {
-		if (prey[i].getType() == 0) {
-			totalEatable++;
-			if (totalEatable == 2)
-				return true;
-		}
-	}
-
-	return false;
-}
-
-// Food::checkFoodPosition(vector<Food> prey, int x, int y)
-//		+ Accepts a coordinate and a vector of food, x, y, and prey
-//		- Returns true if there is food at that position
-bool checkFoodPosition(vector<Food> prey, int x, int y) {
-	for (int i = 0; i < prey.size(); i++) {
-		if (prey[i].getX() == x && prey[i].getY() == y)
-			return true;
-	}
-
-	return false;
+int Food::hasBeenEatenBy(Snake& aSnake) {
+    switch(type) {
+        case addPoint:
+            return 1;
+            break;
+        case minusThreePoints:
+            return -3;
+            break;
+        case increaseSpeed:
+            if (aSnake.speed > 1) {
+                aSnake.speed--;
+            }
+            break;
+        case decreaseSpeed:
+            aSnake.speed++;
+            break;
+        case increaseLength:
+            aSnake.growSnake();
+            break;
+        case decreaseLength:
+            aSnake.shrinkSnake();
+            break;
+    }
+    
+    return 1;
 }

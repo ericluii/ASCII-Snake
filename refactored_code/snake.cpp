@@ -13,10 +13,8 @@
  */
 
 #include <iostream>
-#include <vector>
 #include "link.h"
 #include "snake.h"
-#include "food.h"
 
 using namespace std;
 
@@ -65,7 +63,7 @@ void Snake::setDirection(char direction) {
 //		- If snake tail is at the same position of a food
 //		   grow the snake, and delete food
 //		- Returns true if snake makes a valid move (not gameover)
-bool Snake::moveSnake(vector<Food> &prey) {
+bool Snake::moveSnake(FoodContainer& prey) {
 	Link nextLink = Link(body.at(0).getX(),
 		body.at(0).getY(), body.at(0).getDirection());
 	
@@ -89,11 +87,13 @@ bool Snake::moveSnake(vector<Food> &prey) {
 	}
 
 	// Checks if snake should be resized
-	for(int i = 0; i < prey.size(); i++) {
-		if(prey.at(i).getX() == body.at(body.size() - 1).getX() &&
-			prey.at(i).getY() == body.at(body.size() - 1).getY()) {
-			growSnake();
-			prey.erase(prey.begin() + i);
+	for(int i = 0; i < prey.amountOfFood(); i++) {
+		if(prey.getFood(i)->position().x == body.at(body.size() - 1).getX() &&
+			prey.getFood(i)->position().y == body.at(body.size() - 1).getY()) {
+			if (prey.getFood(i)->getType() != Food::decreaseLength) {
+                growSnake();
+            }
+			prey.removeFood(prey.getFood(i));
 		}
 	}
 
@@ -121,6 +121,12 @@ void Snake::growSnake() {
 	}
 }
 
+void Snake::shrinkSnake() {
+    if(length() > 3) {
+        body.pop_back();
+    }
+}
+
 // Snake::length()
 //		- Returns the length of the snake
 int Snake::length() const{
@@ -139,12 +145,6 @@ int Snake::linkPosX(int bodyPart) {
 //		   bodyPart
 int Snake::linkPosY(int bodyPart) {
 	return body.at(bodyPart).getY();
-}
-
-// Snake::getSPeed()
-//		- Returns the snake speed
-int Snake::getSpeed() {
-	return speed;
 }
 
 // Snake::increaseSpeed()

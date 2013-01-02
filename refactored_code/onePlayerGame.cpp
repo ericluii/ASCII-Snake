@@ -1,7 +1,4 @@
 #include "onePlayerGame.h"
-#include "game.h"
-#include "snake.h"
-#include "food.h"
 #include <iostream>
 #include <fstream>
 
@@ -59,7 +56,7 @@ void onePlayerGame::newGame() {
 	}
     
     // Resets Food
-    prey.clear();
+    prey.removeAllFood();
     addFood();
     addFood();
 }
@@ -96,28 +93,24 @@ bool onePlayerGame::updateGame() {
         return false;
     }
     
-	for(int i = 0; i < prey.size(); i++) {
+    board[snake.linkPosX(0)][snake.linkPosY(0)] = '@';
+ 
+	for(int i = 0; i < prey.amountOfFood(); i++) {
 		// If head is at food, increment score and maybe increase speed
-		if (snake.linkPosX(0) == prey.at(i).getX() && snake.linkPosY(0) == prey.at(i).getY()) {
+		if (snake.linkPosX(0) == prey.getFood(i)->position().x && snake.linkPosY(0) == prey.getFood(i)->position().y) {
 			addFood();
-			prey.at(i).changeLifespan(snake.length() + 1);
-			if (prey.at(i).getType() == 0) {
-				if (score == highscore) {
-					highscore++;
-				}
-				score++;
-			}
-			else if (prey.at(i).getType() == 1) {
-				score = score - 3;
-			}
-			if (score % 5 == 0) {
-				snake.increaseSpeed();
-			}
+			prey.getFood(i)->changeLifespan(snake.length() + 1);
+            board[snake.linkPosX(snake.length() - 1)][snake.linkPosY(snake.length() - 1)] = ' ';
+			score += prey.getFood(i)->hasBeenEatenBy(snake);
+            if (score < 0) {
+                score = 0;
+            }
+            board[snake.linkPosX(snake.length() - 1)][snake.linkPosY(snake.length() - 1)] = '@';
 		}
 		// If lifespan of food is over, remove food and draw new food
-		else if (prey.at(i).getType() == 1 && prey.at(i).getLifespan() == 0) {
-            board[prey.at(i).getX()][prey.at(i).getY()] = ' ';
-			prey.erase(prey.begin() + i);
+		else if (prey.getFood(i)->getLifespan() == 0) {
+            board[prey.getFood(i)->position().x][prey.getFood(i)->position().y] = ' ';
+			prey.removeFood(prey.getFood(i));
 			addFood();
 		}
 	}
@@ -131,9 +124,6 @@ bool onePlayerGame::updateGame() {
 			return false;
 		}
 	}
-    
-    board[snake.linkPosX(0)][snake.linkPosY(0)] = '@';
-    board[snake.linkPosX(snake.length() - 1)][snake.linkPosY(snake.length() - 1)] = '@';
 }
 
 void onePlayerGame::printGame() const {
@@ -176,39 +166,38 @@ void onePlayerGame::printGame() const {
 int* onePlayerGame::snakeSpeed() {
     int* speeds = new int[1];
     
-    speeds[0] = snake.getSpeed();
+    speeds[0] = snake.speed;
     
     return speeds;
 }
 
 void onePlayerGame::addFood() {
-	int type = 0;
+    Food::FoodType type;
+    
+    srand(time(NULL));
+    
+    if (prey.containsHelpfulFood()) {
+        type = static_cast<Food::FoodType>(rand() % Food::TOTAL_TYPES);
+    }
+    else {
+        type = static_cast<Food::FoodType>((rand() % (Food::TOTAL_TYPES/2)) * 2);
+    }
+    
 	int x = rand() % width;
 	int y = rand() % height;
     
-	// If game contains food which is good for you
-	// Allow the possibility of bad food being generated
-	if (containsTwoEatableFood(prey)) {
-		type = rand() % 2;
-	}
-    
 	// Keep finding coordinates until coordinates do not overlap
 	// with food or snake
-	while(snake.checkOverlap(x, y) || checkFoodPosition(prey,x , y)) {
+    Food* newFood = new Food(x, y, type);
+    
+	while(snake.checkOverlap(x, y) || !prey.addFood(newFood)) {
 		x = rand() % width;
 		y = rand() % height;
+        newFood = new Food(x, y, type);
 	}
-    
-	// add food
-	prey.push_back(Food(x, y, type));
     
 	// add food to board
-	if (type == 0) {
-		board[x][y] = '+';
-	}
-	else if (type == 1) {
-		board[x][y] = 'x';
-	}
+	board[x][y] = newFood->displayCharacter();
 }
 
 bool onePlayerGame::setHighscore() {

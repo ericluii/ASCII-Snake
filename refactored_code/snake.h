@@ -1,23 +1,23 @@
 #ifndef __SNAKE_H__
 #define __SNAKE_H__
 #include <vector>
-#include "food.h"
+#include "foodContainer.h"
 #include "link.h"
 
 class Snake {
 	private:
-		int speed;
 		std::vector<Link> body;
 		char lastDirection;
 	public:
 		Snake(int x, int y, int length);
+        int speed;
 		void setDirection(char direction);
-		bool moveSnake(std::vector<Food> &prey);
+		bool moveSnake(FoodContainer& prey);
 		void growSnake();
+        void shrinkSnake();
 		int length() const;
 		int linkPosX(int);
 		int linkPosY(int);
-		int getSpeed();
 		void increaseSpeed();
 		bool checkOverlap(int x, int y);
 };

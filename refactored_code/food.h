@@ -1,24 +1,23 @@
-#ifndef __FOOD_H__
-#define __FOOD_H__
-#include <vector>
+#ifndef _food_h_
+#define _food_h_
+class Snake;
+#include "coordinate.h"
 
 class Food {
 	public:
-		Food(int x, int y, int type);
-		int getX();
-		int getY();
-		int getType();
+        enum FoodType {addPoint, minusThreePoints, decreaseSpeed, increaseSpeed, decreaseLength, increaseLength, TOTAL_TYPES};
+		Food(int x, int y, FoodType type);
+		Coordinate position();
+        char displayCharacter();
+		FoodType getType();
 		int getLifespan();
-		int changeFoodType(int type);
 		void changeLifespan(int time);
+        int hasBeenEatenBy(Snake& aSnake);
 	private:
-		int x;
-		int y;
-		int type;
+        Coordinate coor;
+		FoodType type;
 		int lifespan;
+        char display;
 };
-
-bool containsTwoEatableFood(std::vector<Food> prey);
-bool checkFoodPosition(std::vector<Food> prey, int x, int y);
 
 #endif

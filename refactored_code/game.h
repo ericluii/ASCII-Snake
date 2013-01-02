@@ -2,14 +2,14 @@
 #define _game_h
 
 #include <vector>
-#include "food.h"
+#include "foodContainer.h"
 
 class Game {
     protected:
         int width;
         int height;
         std::vector< std::vector<char> > board;
-        std::vector<Food> prey;
+        FoodContainer prey;
         virtual void addFood() = 0;
     public:
         Game(int width, int height);

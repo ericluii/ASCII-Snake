@@ -7,9 +7,12 @@ Changelog:
 			- Refactored Game class to use strategy template to allow
 			  easy adding of game modes (ie. 2 player in the future)
 
+01/01/13 EL - Refactored Food Class and Added a FoodContainer Class
+			- Optimized a bit by only modifying the board where needed
+
 Next Task:
 =================
-01/01/13 EL - Refactor food and snake
+01/01/13 EL - Refactor snake
 			- Update to use SDL framework to use graphics
 			- Port over to other languages/devices
 
